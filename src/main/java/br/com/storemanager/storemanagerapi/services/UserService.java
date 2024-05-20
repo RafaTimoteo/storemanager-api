@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.storemanager.storemanagerapi.Exceptions.UsernameExistsException;
 import br.com.storemanager.storemanagerapi.Exceptions.CriptoExistsException;
+import br.com.storemanager.storemanagerapi.Exceptions.DeleteExistsException;
 import br.com.storemanager.storemanagerapi.Exceptions.EmailExistsException;
 import br.com.storemanager.storemanagerapi.Exceptions.IdNullExistsException;
 import br.com.storemanager.storemanagerapi.Exceptions.LoginExistsException;
@@ -26,17 +27,11 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    // Retorna usuario pelo ID
+    public User findUserById(Long id) throws IdNullExistsException {
+        Optional<User> user = this.userRepository.findById(id);
 
-    // Cria um novo usuário no banco de dados
-    @Transactional
-    public void salvarUser(User user) throws UsernameExistsException, EmailExistsException, CriptoExistsException {
-
-        //Validações
-        validarUsername(user.getUsername());
-        validarEmail(user.getEmail());
-        criptografarSenha(user);
-
-        userRepository.save(user);
+        return user.orElseThrow(() -> new IdNullExistsException("Usuário não encontrado pelo ID"));
 
     }
 
@@ -53,14 +48,40 @@ public class UserService {
         return user;
     }
 
-    // Retorna usuario pelo ID
-    public User findUserById(Long id) throws IdNullExistsException {
-        Optional<User> user = this.userRepository.findById(id);
+    // Cria um novo usuário no banco de dados
+    @Transactional
+    public User salvarUser(User user) throws UsernameExistsException, EmailExistsException, CriptoExistsException {
+        user.setId(null);
 
-        return user.orElseThrow(() -> new IdNullExistsException("Usuário não encontrado pelo ID"));
+        //Validações
+        validarUsername(user.getUsername());
+        validarEmail(user.getEmail());
+        criptografarSenha(user);
+
+        userRepository.save(user);
+        return user;
+    }
+
+    // Atualiza a senha de usuario ja existente
+    @Transactional
+    public User atualizarUser(User user) throws IdNullExistsException {
+        User newUser = findUserById(user.getId());
+
+        newUser.setSenha(user.getSenha());
+        return userRepository.save(newUser);
 
     }
-    
+
+    public void apagarUser(Long id) throws IdNullExistsException, DeleteExistsException {
+        User user = findUserById(id);
+
+        try {
+            userRepository.delete(user);
+        } catch (Exception e) {
+            throw new DeleteExistsException("Não é possível excluir pois há entidades relacionadas");
+        }
+
+    }
     
     // Verifica se o username já está em uso
     private void validarUsername(String username) throws UsernameExistsException {
