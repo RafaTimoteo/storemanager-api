@@ -72,6 +72,8 @@ public class UserService {
 
     }
 
+    // Apaga usuário do banco de dados
+    @Transactional
     public void apagarUser(Long id) throws IdNullExistsException, DeleteExistsException {
         User user = findUserById(id);
 
