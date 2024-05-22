@@ -1,10 +1,13 @@
 package br.com.storemanager.storemanagerapi.models;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import jakarta.validation.constraints.Size;
@@ -28,6 +31,9 @@ public class Fornecedor {
     @Column(name = "cnpj", length = 18, unique = true)
     @Size(max = 18)
     private String cnpj;
+
+    @OneToMany
+    private List<Produto> produtos;
 
     //Construtor vazio
     public Fornecedor() {

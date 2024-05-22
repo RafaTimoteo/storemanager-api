@@ -64,10 +64,10 @@ public class UserService {
 
     // Atualiza a senha de usuario ja existente
     @Transactional
-    public User atualizarUser(User user) throws IdNullExistsException {
+    public User atualizarUser(User user) throws IdNullExistsException, CriptoExistsException {
         User newUser = findUserById(user.getId());
-
         newUser.setSenha(user.getSenha());
+        criptografarSenha(newUser);
         return userRepository.save(newUser);
 
     }
