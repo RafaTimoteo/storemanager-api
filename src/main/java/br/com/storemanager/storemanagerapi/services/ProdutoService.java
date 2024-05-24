@@ -1,5 +1,6 @@
 package br.com.storemanager.storemanagerapi.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,20 @@ public class ProdutoService {
         Optional<Produto> obj = this.produtoRepository.findById(id);
 
         return obj.orElseThrow(() -> new IdNullExistsException("Produto não encontrado pelo ID!"));
+    }
+
+    // Retorna lista de produtos pelo user associado
+    public List<Produto> findAllByUserId(Long userId) {
+        List<Produto> produtos = produtoRepository.findAllByUserId(userId);
+
+        return produtos;
+    }
+
+    // Retorna lista de produtos pelo fornecedor associado
+    public List<Produto> findAllByFornecedorId(Long fornecedorId) {
+        List<Produto> produtos = produtoRepository.findAllByFornecedorId(fornecedorId);
+
+        return produtos;
     }
 
     // Cria um novo produto no banco de dados
