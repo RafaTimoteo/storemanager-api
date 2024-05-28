@@ -28,6 +28,7 @@ public class ProdutoController {
     @Autowired
     private ProdutoService produtoService;
 
+    // Retorna obj Produto pelo ID
     @GetMapping("/{id}")
     public ResponseEntity<Produto> findProdutoById(@PathVariable Long id) throws Exception {
         Produto produto = this.produtoService.findProdutoById(id);
@@ -35,6 +36,7 @@ public class ProdutoController {
         return ResponseEntity.ok().body(produto);
     }
 
+    // Retorna lista de produtos por User associado
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Produto>> findAllByUserId(@PathVariable Long userId) {
         List<Produto> produtos = this.produtoService.findAllByUserId(userId);
@@ -42,6 +44,7 @@ public class ProdutoController {
         return ResponseEntity.ok().body(produtos);
     }
 
+    // Retorna list de produtos por Fornecedor associado
     @GetMapping("/fornecedor/{fornecedorId}")
     public ResponseEntity<List<Produto>> findAllByFornecedorId(@PathVariable Long fornecedorId) {
         List<Produto> produtos = this.produtoService.findAllByFornecedorId(fornecedorId);
@@ -49,17 +52,20 @@ public class ProdutoController {
         return ResponseEntity.ok().body(produtos);
     }
 
+    // Cria um registro Produto no banco de dados a partir do obj recebido pelo post
     @PostMapping
     @Validated
     public ResponseEntity<Void> salvarProduto(@Valid @RequestBody Produto obj) throws Exception {
         this.produtoService.salvarProduto(obj);
 
+        // URI do registro recém-criado
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
         .path("{id}").buildAndExpand(obj.getId()).toUri();
 
         return ResponseEntity.created(uri).build();
     }
 
+    // Atualiza um Produto já existente no banco de dados
     @PutMapping("/{id}")
     @Validated
     public ResponseEntity<Void> atualizarProduto(@Valid @RequestBody Produto obj, @PathVariable Long id) throws Exception {
@@ -69,6 +75,7 @@ public class ProdutoController {
         return ResponseEntity.noContent().build();
     }
 
+    // Deleta um Produto do banco de dados
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> apagarProduto(@PathVariable Long id) throws Exception {
         this.produtoService.apagarProduto(id);

@@ -27,6 +27,7 @@ public class FornecedorController {
     @Autowired
     private FornecedorService fornecedorService;
 
+    // Retorna um obj Fornecedor pelo ID
     @GetMapping("/{id}")
     public ResponseEntity<Fornecedor> findFornecedorById(@PathVariable Long id) throws Exception {
         Fornecedor obj = this.fornecedorService.findFornecedorById(id);
@@ -34,6 +35,7 @@ public class FornecedorController {
         return ResponseEntity.ok().body(obj);
     }
 
+    // Cria um registro Fornecedor no banco de dados a partir do obj recebido pelo post
     @PostMapping
     public ResponseEntity<Void> salvarFornecedor(@Valid @RequestBody Fornecedor obj) throws Exception {
         this.fornecedorService.salvarFornecedor(obj);
@@ -44,6 +46,7 @@ public class FornecedorController {
         return ResponseEntity.created(uri).build();
     }
 
+    // Atualiza um Fornecedor ja existente no banco de dados
     @PutMapping("/{id}")
     public ResponseEntity<Void> atualizarFornecedor(@Valid @RequestBody Fornecedor obj, @PathVariable Long id) throws Exception {
         obj.setId(id);
@@ -52,6 +55,7 @@ public class FornecedorController {
         return ResponseEntity.noContent().build();
     }
 
+    // Deleta um Fornecedor do banco de dados
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> apagarFornecedor(@PathVariable Long id) throws Exception {
         this.fornecedorService.apagarFornecedor(id);

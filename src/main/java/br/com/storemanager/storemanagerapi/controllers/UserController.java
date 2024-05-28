@@ -30,6 +30,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    // Retorna um obj User pelo ID
     @GetMapping("/{id}")
     public ResponseEntity<User> findById(@PathVariable Long id) throws Exception {
         User user = this.userService.findUserById(id);
@@ -37,17 +38,20 @@ public class UserController {
         return ResponseEntity.ok().body(user);
     }
 
+    // Cria um registro user no banco a partir do obj recebido pelo post
     @PostMapping
     @Validated(CreateUser.class)
     public ResponseEntity<Void> salvarUser(@Valid @RequestBody User user) throws Exception {
         this.userService.salvarUser(user);
 
+        // URI do registro recém-criado
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
         .path("/{id}").buildAndExpand(user.getId()).toUri();
 
         return ResponseEntity.created(uri).build();
     }
 
+    // Atualiza um user ja existente no banco de dados
     @PutMapping("/{id}")
     @Validated(UpdateUser.class)
     public ResponseEntity<Void> atualizarUser(@Valid @RequestBody User user, @PathVariable Long id) throws Exception {
@@ -57,6 +61,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    // Deleta um user do banco de dados
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> apagarUser(@PathVariable Long id) throws Exception {
         this.userService.apagarUser(id);
