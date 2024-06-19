@@ -1,6 +1,8 @@
 package br.com.storemanager.storemanagerapi.services;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,7 +17,7 @@ import br.com.storemanager.storemanagerapi.Exceptions.IdNullExistsException;
 import br.com.storemanager.storemanagerapi.Exceptions.LoginExistsException;
 
 import br.com.storemanager.storemanagerapi.models.User;
-
+import br.com.storemanager.storemanagerapi.models.enums.ProfileEnum;
 import br.com.storemanager.storemanagerapi.repositories.UserRepository;
 
 @Service
@@ -57,6 +59,7 @@ public class UserService {
         validarUsername(user.getUsername());
         validarEmail(user.getEmail());
         criptografarSenha(user);
+        user.setProfiles(Stream.of(ProfileEnum.USER.getCode()).collect(Collectors.toSet()));
 
         userRepository.save(user);
         return user;
