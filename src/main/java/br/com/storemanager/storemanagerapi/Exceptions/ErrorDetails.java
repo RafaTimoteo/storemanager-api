@@ -14,6 +14,10 @@ public class ErrorDetails {
         this.message = message;
         this.details = details;
     }
+    public String toJson() {
+        return "{\"status\": " + getDetails() + ", " +
+                "\"message\": \"" + getMessage() + "\"}";
+    }
 
     // Getters and Setters
     public Date getTimestamp() {
@@ -39,6 +43,5 @@ public class ErrorDetails {
     public void setDetails(String details) {
         this.details = details;
     }
-
     
 }
