@@ -12,13 +12,13 @@ import br.com.storemanager.storemanagerapi.models.enums.ProfileEnum;
 
 public class UserSpringSecurity implements UserDetails {
 
-    private Integer id;
+    private Long id;
     private String username;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
     // Construtor
-    public UserSpringSecurity(Integer id, String username, String password,
+    public UserSpringSecurity(Long id, String username, String password,
             Set<ProfileEnum> profileEnum) {
         this.id = id;
         this.username = username;
@@ -56,7 +56,7 @@ public class UserSpringSecurity implements UserDetails {
     }
 
     // Getters
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
