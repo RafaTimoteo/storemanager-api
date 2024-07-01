@@ -13,7 +13,7 @@ import br.com.storemanager.storemanagerapi.repositories.UserRepository;
 import br.com.storemanager.storemanagerapi.security.UserSpringSecurity;
 
 @Service
-public class UserSpringSecurityImpl implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
     
     @Autowired
     UserRepository userRepository;
