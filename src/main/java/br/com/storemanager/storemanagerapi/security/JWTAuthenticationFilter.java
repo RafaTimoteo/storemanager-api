@@ -1,5 +1,6 @@
 package br.com.storemanager.storemanagerapi.security;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import br.com.storemanager.storemanagerapi.Exceptions.GlobalExceptionHandler;
 import br.com.storemanager.storemanagerapi.models.User;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -55,16 +57,16 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             System.out.println("Autenticação bem-sucedida: " + authentication);
 
             return authentication;
-        } catch (Exception e) {
+        } catch (IOException e) {
             // Log para capturar a exceção
             e.printStackTrace();
-            throw new RuntimeException("Erro durante a tentativa de autenticação", e);
+            throw new RuntimeException(e);
         }
     }
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-    FilterChain filterChain, Authentication authentication) {
+    FilterChain filterChain, Authentication authentication) throws IOException, ServletException {
         UserSpringSecurity userSpringSecurity = (UserSpringSecurity) authentication.getPrincipal();
         String username = userSpringSecurity.getUsername();
         String token = this.jwtUtil.generateToken(username);
