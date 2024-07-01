@@ -21,6 +21,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import br.com.storemanager.storemanagerapi.security.JWTAuthenticationFilter;
+import br.com.storemanager.storemanagerapi.security.JWTAuthorizationFilter;
 import br.com.storemanager.storemanagerapi.security.JWTUtil;
 
 import org.springframework.http.HttpMethod;
@@ -59,6 +60,7 @@ public class SecurityConfig {
             .disable()
         )
         .addFilterBefore(new JWTAuthenticationFilter(authenticationManager, jwtUtil), UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(new JWTAuthorizationFilter(authenticationManager, jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class)
         .sessionManagement(management -> management
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
