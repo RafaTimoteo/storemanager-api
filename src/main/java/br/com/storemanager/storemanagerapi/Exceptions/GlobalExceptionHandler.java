@@ -64,13 +64,12 @@ public class GlobalExceptionHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException exception) throws IOException, ServletException {
-            Integer status = HttpStatus.FORBIDDEN.value();
-            response.setStatus(status);
-            response.setContentType("application/json");
-            ErrorDetails errorDetails = new ErrorDetails(new Date(), "Email ou senha invalidos!", Integer.toString(status));
-            response.getWriter().append(errorDetails.toJson());
-
-            throw new UnsupportedOperationException("Unimplemented method 'onAuthenticationFailure'");
+        Integer status = HttpStatus.UNAUTHORIZED.value();
+        response.setStatus(status);
+        response.setContentType("application/json");
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), "Email ou senha inválidos!", Integer.toString(status));
+        response.getWriter().append(errorDetails.toJson());
     }
+
 
 }
