@@ -6,12 +6,16 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.storemanager.storemanagerapi.Exceptions.AuthorizationException;
 import br.com.storemanager.storemanagerapi.Exceptions.DeleteExistsException;
 import br.com.storemanager.storemanagerapi.Exceptions.IdNullExistsException;
 import br.com.storemanager.storemanagerapi.models.Fornecedor;
 import br.com.storemanager.storemanagerapi.models.Produto;
 import br.com.storemanager.storemanagerapi.models.User;
+import br.com.storemanager.storemanagerapi.models.enums.ProfileEnum;
 import br.com.storemanager.storemanagerapi.repositories.ProdutoRepository;
+import br.com.storemanager.storemanagerapi.security.UserSpringSecurity;
+import br.com.storemanager.storemanagerapi.utils.SecurityUtil;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -66,8 +70,14 @@ public class ProdutoService {
     // Atualiza nome, validade e descrição de um produto
     @Transactional
     public Produto atualizarProduto(Produto produto) throws IdNullExistsException {
+        
+        UserSpringSecurity userSpringSecurity = SecurityUtil.authenticated();
+        if (!produto.getUser().getId().equals(userSpringSecurity.getId()) && !userSpringSecurity.hasRole(ProfileEnum.ADMIN)) {
+            throw new AuthorizationException("Acesso negado! produto criado por outro user");
+        }
+        
         Produto newProduto = this.findProdutoById(produto.getId());
-
+        
         newProduto.setNome(produto.getNome());
         newProduto.setValidade(produto.getValidade());
         newProduto.setDescricao(produto.getDescricao());

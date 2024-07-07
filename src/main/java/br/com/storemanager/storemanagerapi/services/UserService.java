@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.storemanager.storemanagerapi.Exceptions.UsernameExistsException;
+import br.com.storemanager.storemanagerapi.Exceptions.AuthorizationException;
 import br.com.storemanager.storemanagerapi.Exceptions.CriptoExistsException;
 import br.com.storemanager.storemanagerapi.Exceptions.DeleteExistsException;
 import br.com.storemanager.storemanagerapi.Exceptions.EmailExistsException;
@@ -19,6 +20,8 @@ import br.com.storemanager.storemanagerapi.Exceptions.LoginExistsException;
 import br.com.storemanager.storemanagerapi.models.User;
 import br.com.storemanager.storemanagerapi.models.enums.ProfileEnum;
 import br.com.storemanager.storemanagerapi.repositories.UserRepository;
+import br.com.storemanager.storemanagerapi.security.UserSpringSecurity;
+import br.com.storemanager.storemanagerapi.utils.SecurityUtil;
 
 @Service
 public class UserService {
@@ -31,6 +34,12 @@ public class UserService {
 
     // Retorna usuario pelo ID
     public User findUserById(Long id) throws IdNullExistsException {
+        // Verificação de segurança
+        UserSpringSecurity userSpringSecurity = SecurityUtil.authenticated();
+        if (!userSpringSecurity.hasRole(ProfileEnum.ADMIN) && !id.equals(userSpringSecurity.getId())) {
+            throw new AuthorizationException("Acesso negado!");
+        }
+
         Optional<User> user = this.userRepository.findById(id);
 
         return user.orElseThrow(() -> new IdNullExistsException("Usuário não encontrado pelo ID"));
@@ -65,29 +74,6 @@ public class UserService {
         return user;
     }
 
-    // Atualiza a senha de usuario ja existente
-    @Transactional
-    public User atualizarUser(User user) throws IdNullExistsException, CriptoExistsException {
-        User newUser = findUserById(user.getId());
-        newUser.setSenha(user.getSenha());
-        criptografarSenha(newUser);
-        return userRepository.save(newUser);
-
-    }
-
-    // Apaga usuário do banco de dados
-    @Transactional
-    public void apagarUser(Long id) throws IdNullExistsException, DeleteExistsException {
-        User user = findUserById(id);
-
-        try {
-            userRepository.delete(user);
-        } catch (Exception e) {
-            throw new DeleteExistsException("Não é possível excluir pois há entidades relacionadas");
-        }
-
-    }
-    
     // Verifica se o username já está em uso
     private void validarUsername(String username) throws UsernameExistsException {
        Optional<User> optionalUser = this.userRepository.findByUsername(username);
@@ -115,4 +101,42 @@ public class UserService {
             throw new CriptoExistsException("Erro de criptografia da senha!");
         }
     }
+
+    // Atualiza a senha de usuario ja existente
+    @Transactional
+    public User atualizarUser(User user) throws IdNullExistsException, CriptoExistsException {
+        // Verificação de segurança
+        UserSpringSecurity userSpringSecurity = SecurityUtil.authenticated();
+        if (!userSpringSecurity.hasRole(ProfileEnum.ADMIN) && !user.getId().equals(userSpringSecurity.getId())) {
+            throw new AuthorizationException("Acesso negado!");
+        }
+
+        User newUser = findUserById(user.getId());
+
+        newUser.setSenha(user.getSenha());
+        criptografarSenha(newUser);
+        return userRepository.save(newUser);
+        
+    }
+    
+    // Apaga usuário do banco de dados
+    @Transactional
+    public void apagarUser(Long id) throws IdNullExistsException, DeleteExistsException {
+        // Verificação de segurança
+        UserSpringSecurity userSpringSecurity = SecurityUtil.authenticated();
+        if (!userSpringSecurity.hasRole(ProfileEnum.ADMIN) && !id.equals(userSpringSecurity.getId())) {
+            throw new AuthorizationException("Acesso negado!");
+        }
+        
+        User user = findUserById(id);
+
+        try {
+            userRepository.delete(user);
+        } catch (Exception e) {
+            throw new DeleteExistsException("Não é possível excluir pois há entidades relacionadas");
+        }
+
+    }
+    
+    
 }

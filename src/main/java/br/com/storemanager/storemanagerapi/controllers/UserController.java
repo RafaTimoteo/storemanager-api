@@ -16,14 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import br.com.storemanager.storemanagerapi.Exceptions.AuthorizationException;
 import br.com.storemanager.storemanagerapi.models.User;
 import br.com.storemanager.storemanagerapi.models.User.CreateUser;
 import br.com.storemanager.storemanagerapi.models.User.UpdateUser;
-import br.com.storemanager.storemanagerapi.models.enums.ProfileEnum;
-import br.com.storemanager.storemanagerapi.security.UserSpringSecurity;
 import br.com.storemanager.storemanagerapi.services.UserService;
-import br.com.storemanager.storemanagerapi.utils.SecurityUtil;
 import jakarta.validation.Valid;
 
 @RestController
@@ -39,13 +35,6 @@ public class UserController {
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<User> findById(@PathVariable Long id) throws Exception {
-
-        // Verificação de segurança
-        UserSpringSecurity userSpringSecurity = SecurityUtil.authenticated();
-        if (!userSpringSecurity.hasRole(ProfileEnum.ADMIN) && !id.equals(userSpringSecurity.getId())) {
-            throw new AuthorizationException("Acesso negado!");
-        }
-
         User user = this.userService.findUserById(id);
         
         return ResponseEntity.ok().body(user);
@@ -70,13 +59,6 @@ public class UserController {
     @Validated(UpdateUser.class)
     public ResponseEntity<Void> atualizarUser(@Valid @RequestBody User user, @PathVariable Long id) throws Exception {
         user.setId(id);
-
-        // Verificação de segurança
-        UserSpringSecurity userSpringSecurity = SecurityUtil.authenticated();
-        if (!userSpringSecurity.hasRole(ProfileEnum.ADMIN) && !user.getId().equals(userSpringSecurity.getId())) {
-            throw new AuthorizationException("Acesso negado!");
-        }
-
         this.userService.atualizarUser(user);
 
         return ResponseEntity.noContent().build();
@@ -86,13 +68,6 @@ public class UserController {
     @DeleteMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> apagarUser(@PathVariable Long id) throws Exception {
-
-        // Verificação de segurança
-        UserSpringSecurity userSpringSecurity = SecurityUtil.authenticated();
-        if (!userSpringSecurity.hasRole(ProfileEnum.ADMIN) && !id.equals(userSpringSecurity.getId())) {
-            throw new AuthorizationException("Acesso negado!");
-        }
-
         this.userService.apagarUser(id);
 
         return ResponseEntity.noContent().build();

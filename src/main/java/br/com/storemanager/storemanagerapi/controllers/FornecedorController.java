@@ -4,6 +4,7 @@ import java.net.URI;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,7 @@ public class FornecedorController {
 
     // Retorna um obj Fornecedor pelo ID
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Fornecedor> findFornecedorById(@PathVariable Long id) throws Exception {
         Fornecedor obj = this.fornecedorService.findFornecedorById(id);
         
@@ -37,6 +39,7 @@ public class FornecedorController {
 
     // Cria um registro Fornecedor no banco de dados a partir do obj recebido pelo post
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> salvarFornecedor(@Valid @RequestBody Fornecedor obj) throws Exception {
         this.fornecedorService.salvarFornecedor(obj);
 
@@ -48,6 +51,7 @@ public class FornecedorController {
 
     // Atualiza um Fornecedor ja existente no banco de dados
     @PutMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> atualizarFornecedor(@Valid @RequestBody Fornecedor obj, @PathVariable Long id) throws Exception {
         obj.setId(id);
         this.fornecedorService.atualizarFornecedor(obj);
@@ -57,6 +61,7 @@ public class FornecedorController {
 
     // Deleta um Fornecedor do banco de dados
     @DeleteMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> apagarFornecedor(@PathVariable Long id) throws Exception {
         this.fornecedorService.apagarFornecedor(id);
 

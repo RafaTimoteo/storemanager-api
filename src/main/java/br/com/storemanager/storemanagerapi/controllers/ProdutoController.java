@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,7 @@ public class ProdutoController {
     private ProdutoService produtoService;
 
     // Retorna obj Produto pelo ID
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public ResponseEntity<Produto> findProdutoById(@PathVariable Long id) throws Exception {
         Produto produto = this.produtoService.findProdutoById(id);
@@ -38,6 +40,7 @@ public class ProdutoController {
 
     // Retorna lista de produtos por User associado
     @GetMapping("/user/{userId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Produto>> findAllByUserId(@PathVariable Long userId) {
         List<Produto> produtos = this.produtoService.findAllByUserId(userId);
 
@@ -46,6 +49,7 @@ public class ProdutoController {
 
     // Retorna list de produtos por Fornecedor associado
     @GetMapping("/fornecedor/{fornecedorId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Produto>> findAllByFornecedorId(@PathVariable Long fornecedorId) {
         List<Produto> produtos = this.produtoService.findAllByFornecedorId(fornecedorId);
 
@@ -54,6 +58,7 @@ public class ProdutoController {
 
     // Cria um registro Produto no banco de dados a partir do obj recebido pelo post
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     @Validated
     public ResponseEntity<Void> salvarProduto(@Valid @RequestBody Produto obj) throws Exception {
         this.produtoService.salvarProduto(obj);
@@ -67,6 +72,7 @@ public class ProdutoController {
 
     // Atualiza um Produto já existente no banco de dados
     @PutMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     @Validated
     public ResponseEntity<Void> atualizarProduto(@Valid @RequestBody Produto obj, @PathVariable Long id) throws Exception {
         obj.setId(id);
@@ -77,6 +83,7 @@ public class ProdutoController {
 
     // Deleta um Produto do banco de dados
     @DeleteMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> apagarProduto(@PathVariable Long id) throws Exception {
         this.produtoService.apagarProduto(id);
 
