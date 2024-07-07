@@ -60,7 +60,14 @@ public class GlobalExceptionHandler implements AuthenticationFailureHandler {
 
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
+    
+    @ExceptionHandler(AuthorizationException.class)
+    ResponseEntity<Object> AuthorizationException(AuthorizationException ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(), request.getDescription(false));
 
+        return new ResponseEntity<>(errorDetails, HttpStatus.FORBIDDEN);
+    }
+    
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException exception) throws IOException, ServletException {
@@ -69,7 +76,7 @@ public class GlobalExceptionHandler implements AuthenticationFailureHandler {
         response.setContentType("application/json");
         ErrorDetails errorDetails = new ErrorDetails(new Date(), "Email ou senha inválidos!", Integer.toString(status));
         response.getWriter().append(errorDetails.toJson());
-    }
+    }   
 
 
 }
