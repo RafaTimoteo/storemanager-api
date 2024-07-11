@@ -17,9 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.storemanager.storemanagerapi.models.User;
-import br.com.storemanager.storemanagerapi.models.User.CreateUser;
-import br.com.storemanager.storemanagerapi.models.User.UpdateUser;
+import br.com.storemanager.storemanagerapi.models.dto.UserRequest;
+import br.com.storemanager.storemanagerapi.models.dto.UserResponse;
 import br.com.storemanager.storemanagerapi.services.UserService;
+import br.com.storemanager.storemanagerapi.utils.UserMapper;
 import jakarta.validation.Valid;
 
 @RestController
@@ -34,16 +35,19 @@ public class UserController {
     // Retorna um obj User pelo ID
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<User> findById(@PathVariable Long id) throws Exception {
+    public ResponseEntity<UserResponse> findById(@PathVariable Long id) throws Exception {
         User user = this.userService.findUserById(id);
+
+        UserResponse response = UserMapper.toResponse(user);
         
-        return ResponseEntity.ok().body(user);
+        return ResponseEntity.ok().body(response);
     }
 
     // Cria um registro user no banco a partir do obj recebido pelo post
     @PostMapping
-    @Validated(CreateUser.class)
-    public ResponseEntity<Void> salvarUser(@Valid @RequestBody User user) throws Exception {
+    @Validated()
+    public ResponseEntity<Void> salvarUser(@Valid @RequestBody UserRequest request) throws Exception {
+        User user = UserMapper.toUser(request);
         this.userService.salvarUser(user);
 
         // URI do registro recém-criado
@@ -56,8 +60,9 @@ public class UserController {
     // Atualiza um user ja existente no banco de dados (senha)
     @PutMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    @Validated(UpdateUser.class)
-    public ResponseEntity<Void> atualizarUser(@Valid @RequestBody User user, @PathVariable Long id) throws Exception {
+    @Validated()
+    public ResponseEntity<Void> atualizarUser(@Valid @RequestBody UserRequest request, @PathVariable Long id) throws Exception {
+        User user = UserMapper.toUser(request);
         user.setId(id);
         this.userService.atualizarUser(user);
 

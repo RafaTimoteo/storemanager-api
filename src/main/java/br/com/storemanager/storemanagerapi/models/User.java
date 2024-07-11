@@ -30,9 +30,6 @@ import jakarta.validation.constraints.Size;
 @Table(name = User.TABLE_NAME)
 public class User {
 
-    public interface CreateUser {}
-    public interface UpdateUser {}
-
     public static final String TABLE_NAME = "user";
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,25 +38,27 @@ public class User {
     private Long id;
 
     @Column(name = "user_name", length = 25, unique = true)
-    @Size(groups = CreateUser.class, min = 5, max = 25)
-    @NotBlank(groups = CreateUser.class)
+    @Size(min = 5, max = 25)
+    @NotBlank()
     private String username;
 
     @Column(name = "nome_completo", length = 60, unique = false)
-    @Size(groups = CreateUser.class, min = 5, max = 60)
+    @Size(min = 5, max = 60)
     @NotBlank
     private String nomeCompleto;
 
     @Column(name = "email")
     @Email
-    @NotEmpty(groups = CreateUser.class)
+    @NotEmpty()
     private String email;
 
     @Column(name = "senha")
-    @NotBlank(groups = {CreateUser.class, UpdateUser.class})
+    @JsonProperty(access = Access.WRITE_ONLY)
+    @NotBlank()
     private String senha;
     
     @OneToMany()
+    @JsonProperty(access = Access.WRITE_ONLY)
     private List<Produto> produtos;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -75,10 +74,10 @@ public class User {
     
     // Construtor
     public User(Long id,
-    @Size(groups = CreateUser.class, min = 5, max = 25) @NotBlank(groups = CreateUser.class) String username,
-    @Size(groups = CreateUser.class, min = 5, max = 60) @NotBlank String nomeCompleto,
-    @Email @NotEmpty(groups = CreateUser.class) String email,
-    @NotBlank(groups = { CreateUser.class, UpdateUser.class }) String senha, List<Produto> produtos,
+    @Size(min = 5, max = 25) @NotBlank() String username,
+    @Size(min = 5, max = 60) @NotBlank String nomeCompleto,
+    @Email @NotEmpty() String email,
+    @NotBlank() String senha, List<Produto> produtos,
     Set<Integer> profiles) {
         this.id = id;
         this.username = username;
