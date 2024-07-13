@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.storemanager.storemanagerapi.models.Fornecedor;
+import br.com.storemanager.storemanagerapi.models.dto.FornecedorRequest;
+import br.com.storemanager.storemanagerapi.models.dto.FornecedorResponse;
 import br.com.storemanager.storemanagerapi.services.FornecedorService;
+import br.com.storemanager.storemanagerapi.utils.FornecedorMapper;
 import jakarta.validation.Valid;
 
 @RestController
@@ -31,16 +34,18 @@ public class FornecedorController {
     // Retorna um obj Fornecedor pelo ID
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Fornecedor> findFornecedorById(@PathVariable Long id) throws Exception {
+    public ResponseEntity<FornecedorResponse> findFornecedorById(@PathVariable Long id) throws Exception {
         Fornecedor obj = this.fornecedorService.findFornecedorById(id);
-        
-        return ResponseEntity.ok().body(obj);
+        FornecedorResponse response = FornecedorMapper.toResponse(obj);
+
+        return ResponseEntity.ok().body(response);
     }
 
     // Cria um registro Fornecedor no banco de dados a partir do obj recebido pelo post
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Void> salvarFornecedor(@Valid @RequestBody Fornecedor obj) throws Exception {
+    public ResponseEntity<Void> salvarFornecedor(@Valid @RequestBody FornecedorRequest request) throws Exception {
+        Fornecedor obj = FornecedorMapper.toFornecedor(request);
         this.fornecedorService.salvarFornecedor(obj);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -52,7 +57,8 @@ public class FornecedorController {
     // Atualiza um Fornecedor ja existente no banco de dados
     @PutMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Void> atualizarFornecedor(@Valid @RequestBody Fornecedor obj, @PathVariable Long id) throws Exception {
+    public ResponseEntity<Void> atualizarFornecedor(@Valid @RequestBody FornecedorRequest request, @PathVariable Long id) throws Exception {
+        Fornecedor obj = FornecedorMapper.toFornecedor(request);
         obj.setId(id);
         this.fornecedorService.atualizarFornecedor(obj);
 
