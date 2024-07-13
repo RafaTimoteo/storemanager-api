@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.storemanager.storemanagerapi.models.Produto;
+import br.com.storemanager.storemanagerapi.models.dto.ProdutoResponse;
 import br.com.storemanager.storemanagerapi.services.ProdutoService;
+import br.com.storemanager.storemanagerapi.utils.ProdutoMapper;
 import jakarta.validation.Valid;
 
 @RestController
@@ -32,28 +34,31 @@ public class ProdutoController {
     // Retorna obj Produto pelo ID
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
-    public ResponseEntity<Produto> findProdutoById(@PathVariable Long id) throws Exception {
+    public ResponseEntity<ProdutoResponse> findProdutoById(@PathVariable Long id) throws Exception {
         Produto produto = this.produtoService.findProdutoById(id);
+        ProdutoResponse response = ProdutoMapper.toResponse(produto);
 
-        return ResponseEntity.ok().body(produto);
+        return ResponseEntity.ok().body(response);
     }
 
     // Retorna lista de produtos por User associado
     @GetMapping("/user/{userId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<Produto>> findAllByUserId(@PathVariable Long userId) {
+    public ResponseEntity<List<ProdutoResponse>> findAllByUserId(@PathVariable Long userId) {
         List<Produto> produtos = this.produtoService.findAllByUserId(userId);
+        List<ProdutoResponse> responses = ProdutoMapper.toResponseList(produtos);
 
-        return ResponseEntity.ok().body(produtos);
+        return ResponseEntity.ok().body(responses);
     }
 
     // Retorna list de produtos por Fornecedor associado
     @GetMapping("/fornecedor/{fornecedorId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<Produto>> findAllByFornecedorId(@PathVariable Long fornecedorId) {
+    public ResponseEntity<List<ProdutoResponse>> findAllByFornecedorId(@PathVariable Long fornecedorId) {
         List<Produto> produtos = this.produtoService.findAllByFornecedorId(fornecedorId);
+        List<ProdutoResponse> responses = ProdutoMapper.toResponseList(produtos);
 
-        return ResponseEntity.ok().body(produtos);
+        return ResponseEntity.ok().body(responses);
     }
 
     // Cria um registro Produto no banco de dados a partir do obj recebido pelo post
