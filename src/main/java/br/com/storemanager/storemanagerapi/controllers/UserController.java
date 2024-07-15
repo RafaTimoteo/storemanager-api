@@ -35,7 +35,7 @@ public class UserController {
     // Retorna um obj User pelo ID
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<UserResponse> findById(@PathVariable Long id) throws Exception {
+    public ResponseEntity<UserResponse> findById(@PathVariable Long id) {
         User user = this.userService.findUserById(id);
 
         UserResponse response = UserMapper.toResponse(user);
@@ -46,7 +46,7 @@ public class UserController {
     // Cria um registro user no banco a partir do obj recebido pelo post
     @PostMapping
     @Validated()
-    public ResponseEntity<Void> salvarUser(@Valid @RequestBody UserRequest request) throws Exception {
+    public ResponseEntity<Void> salvarUser(@Valid @RequestBody UserRequest request) {
         User user = UserMapper.toUser(request);
         this.userService.salvarUser(user);
 
@@ -61,7 +61,7 @@ public class UserController {
     @PutMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     @Validated()
-    public ResponseEntity<Void> atualizarUser(@Valid @RequestBody UserRequest request, @PathVariable Long id) throws Exception {
+    public ResponseEntity<Void> atualizarUser(@Valid @RequestBody UserRequest request, @PathVariable Long id) {
         User user = UserMapper.toUser(request);
         user.setId(id);
         this.userService.atualizarUser(user);
@@ -72,7 +72,7 @@ public class UserController {
     // Deleta um user do banco de dados
     @DeleteMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Void> apagarUser(@PathVariable Long id) throws Exception {
+    public ResponseEntity<Void> apagarUser(@PathVariable Long id) {
         this.userService.apagarUser(id);
 
         return ResponseEntity.noContent().build();

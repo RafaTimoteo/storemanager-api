@@ -33,7 +33,7 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     // Retorna usuario pelo ID
-    public User findUserById(Long id) throws IdNullExistsException {
+    public User findUserById(Long id) {
         // Verificação de segurança
         UserSpringSecurity userSpringSecurity = SecurityUtil.authenticated();
         if (!userSpringSecurity.hasRole(ProfileEnum.ADMIN) && !id.equals(userSpringSecurity.getId())) {
@@ -47,7 +47,7 @@ public class UserService {
     }
 
     // Retorna o usuario a ser logado
-    public User loginUser(String username, String senha) throws LoginExistsException {
+    public User loginUser(String username, String senha) {
         Optional<User> optionalUser = this.userRepository.findByUsername(username);
 
         User user = optionalUser.orElseThrow(() -> new LoginExistsException("Username incorreto!"));
@@ -61,7 +61,7 @@ public class UserService {
 
     // Cria um novo usuário no banco de dados
     @Transactional
-    public User salvarUser(User user) throws UsernameExistsException, EmailExistsException, CriptoExistsException {
+    public User salvarUser(User user) {
         user.setId(null);
 
         //Validações
@@ -75,7 +75,7 @@ public class UserService {
     }
 
     // Verifica se o username já está em uso
-    private void validarUsername(String username) throws UsernameExistsException {
+    private void validarUsername(String username) {
        Optional<User> optionalUser = this.userRepository.findByUsername(username);
 
        if (optionalUser.isPresent()) {
@@ -84,7 +84,7 @@ public class UserService {
     }
 
     // Verifica se o email ja está em uso
-    private void validarEmail(String email) throws EmailExistsException {
+    private void validarEmail(String email) {
         Optional<User> optionalUser = this.userRepository.findByEmail(email);
 
         if (optionalUser.isPresent()) {
@@ -93,7 +93,7 @@ public class UserService {
     }
 
     // Criptografa a senha a ser salva no banco de dados
-    private void criptografarSenha(User user) throws CriptoExistsException {
+    private void criptografarSenha(User user) {
         try {
             String cripto = this.passwordEncoder.encode(user.getSenha());
             user.setSenha(cripto);
@@ -104,7 +104,7 @@ public class UserService {
 
     // Atualiza a senha de usuario ja existente
     @Transactional
-    public User atualizarUser(User user) throws IdNullExistsException, CriptoExistsException {
+    public User atualizarUser(User user) {
         // Verificação de segurança
         UserSpringSecurity userSpringSecurity = SecurityUtil.authenticated();
         if (!userSpringSecurity.hasRole(ProfileEnum.ADMIN) && !user.getId().equals(userSpringSecurity.getId())) {
@@ -121,7 +121,7 @@ public class UserService {
     
     // Apaga usuário do banco de dados
     @Transactional
-    public void apagarUser(Long id) throws IdNullExistsException, DeleteExistsException {
+    public void apagarUser(Long id) {
         // Verificação de segurança
         UserSpringSecurity userSpringSecurity = SecurityUtil.authenticated();
         if (!userSpringSecurity.hasRole(ProfileEnum.ADMIN) && !id.equals(userSpringSecurity.getId())) {

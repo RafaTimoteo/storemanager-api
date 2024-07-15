@@ -34,7 +34,7 @@ public class ProdutoController {
     // Retorna obj Produto pelo ID
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
-    public ResponseEntity<ProdutoResponse> findProdutoById(@PathVariable Long id) throws Exception {
+    public ResponseEntity<ProdutoResponse> findProdutoById(@PathVariable Long id) {
         Produto produto = this.produtoService.findProdutoById(id);
         ProdutoResponse response = ProdutoMapper.toResponse(produto);
 
@@ -65,7 +65,7 @@ public class ProdutoController {
     @PostMapping
     @PreAuthorize("isAuthenticated()")
     @Validated
-    public ResponseEntity<Void> salvarProduto(@Valid @RequestBody Produto obj) throws Exception {
+    public ResponseEntity<Void> salvarProduto(@Valid @RequestBody Produto obj) {
         this.produtoService.salvarProduto(obj);
 
         // URI do registro recém-criado
@@ -79,7 +79,7 @@ public class ProdutoController {
     @PutMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     @Validated
-    public ResponseEntity<Void> atualizarProduto(@Valid @RequestBody Produto obj, @PathVariable Long id) throws Exception {
+    public ResponseEntity<Void> atualizarProduto(@Valid @RequestBody Produto obj, @PathVariable Long id) {
         obj.setId(id);
         this.produtoService.atualizarProduto(obj);
 
@@ -89,7 +89,7 @@ public class ProdutoController {
     // Deleta um Produto do banco de dados
     @DeleteMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Void> apagarProduto(@PathVariable Long id) throws Exception {
+    public ResponseEntity<Void> apagarProduto(@PathVariable Long id) {
         this.produtoService.apagarProduto(id);
 
         return ResponseEntity.noContent().build();

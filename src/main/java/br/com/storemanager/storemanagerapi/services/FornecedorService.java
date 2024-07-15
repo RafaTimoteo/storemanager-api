@@ -18,7 +18,7 @@ public class FornecedorService {
     private FornecedorRepository fornecedorRepository;
 
     // Retorna o um fornecedor pelo ID
-    public Fornecedor findFornecedorById(Long id) throws IdNullExistsException {
+    public Fornecedor findFornecedorById(Long id) {
         Optional<Fornecedor> obj = fornecedorRepository.findById(id);
 
         return obj.orElseThrow(() -> new IdNullExistsException("Fornecedor não encontrado pelo ID"));
@@ -36,7 +36,7 @@ public class FornecedorService {
 
     // Atualiza nome e CNPJ de um fornecedor ja existente
     @Transactional
-    public Fornecedor atualizarFornecedor(Fornecedor obj) throws IdNullExistsException {
+    public Fornecedor atualizarFornecedor(Fornecedor obj) {
         Fornecedor newObj = findFornecedorById(obj.getId());
 
         newObj.setNome(obj.getNome());
@@ -49,7 +49,7 @@ public class FornecedorService {
 
     // Apaga um fornecedor do banco de dados a partir do ID
     @Transactional
-    public void apagarFornecedor(Long id) throws IdNullExistsException, DeleteExistsException {
+    public void apagarFornecedor(Long id) {
         Fornecedor obj = findFornecedorById(id);
 
         try {

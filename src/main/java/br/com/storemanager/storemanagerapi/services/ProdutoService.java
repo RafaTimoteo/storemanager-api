@@ -31,7 +31,7 @@ public class ProdutoService {
     private FornecedorService fornecedorService;
 
     // Retorna o produto pelo ID
-    public Produto findProdutoById(Long id) throws IdNullExistsException {
+    public Produto findProdutoById(Long id) {
         Optional<Produto> obj = this.produtoRepository.findById(id);
 
         return obj.orElseThrow(() -> new IdNullExistsException("Produto não encontrado pelo ID!"));
@@ -53,7 +53,7 @@ public class ProdutoService {
 
     // Cria um novo produto no banco de dados
     @Transactional
-    public Produto salvarProduto(Produto produto) throws IdNullExistsException {
+    public Produto salvarProduto(Produto produto) {
         User user = this.userService.findUserById(produto.getUser().getId());
         Fornecedor fornecedor = this.fornecedorService.findFornecedorById(produto.getFornecedor().getId());
 
@@ -69,7 +69,7 @@ public class ProdutoService {
 
     // Atualiza nome, validade e descrição de um produto
     @Transactional
-    public Produto atualizarProduto(Produto produto) throws IdNullExistsException {
+    public Produto atualizarProduto(Produto produto) {
         
         UserSpringSecurity userSpringSecurity = SecurityUtil.authenticated();
         if (!produto.getUser().getId().equals(userSpringSecurity.getId()) && !userSpringSecurity.hasRole(ProfileEnum.ADMIN)) {
@@ -87,7 +87,7 @@ public class ProdutoService {
 
     // Apaga um produto do banco de dados a partir do ID
     @Transactional
-    public void apagarProduto(Long id) throws IdNullExistsException, DeleteExistsException {
+    public void apagarProduto(Long id) {
         Produto produto = this.findProdutoById(id);
 
         try {
