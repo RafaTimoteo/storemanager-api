@@ -69,9 +69,18 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     FilterChain filterChain, Authentication authentication) throws IOException, ServletException {
         UserSpringSecurity userSpringSecurity = (UserSpringSecurity) authentication.getPrincipal();
         String username = userSpringSecurity.getUsername();
+        Long id = userSpringSecurity.getId();
         String token = this.jwtUtil.generateToken(username);
         response.addHeader("Authorization", "Bearer " + token);
         response.addHeader("access-control-expose-headers", "Authorization");
+
+        //Cria a resposta da autenticação com o nome do user e id
+        AuthResponse authResponse = new AuthResponse(id, username);
+
+         // Escreve a resposta como JSON no corpo da resposta HTTP
+        response.setContentType("application/json");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(authResponse));
+        response.getWriter().flush();
     }
 
     // Getters e setters
