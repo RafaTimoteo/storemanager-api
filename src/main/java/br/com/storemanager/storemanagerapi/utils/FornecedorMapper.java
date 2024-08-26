@@ -1,5 +1,8 @@
 package br.com.storemanager.storemanagerapi.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import br.com.storemanager.storemanagerapi.models.Fornecedor;
 import br.com.storemanager.storemanagerapi.models.dto.FornecedorRequest;
 import br.com.storemanager.storemanagerapi.models.dto.FornecedorResponse;
@@ -20,5 +23,21 @@ public class FornecedorMapper {
         fornecedor.setCnpj(request.getCnpj());
 
         return fornecedor;
+    }
+
+    public static List<FornecedorResponse> toResponseList(List<Fornecedor> fornecedores) {
+        List<FornecedorResponse> responses = new ArrayList<>();
+
+        for (Fornecedor fornecedor : fornecedores) {
+            FornecedorResponse fornecedorResponse = new FornecedorResponse();
+
+            fornecedorResponse.setId(fornecedor.getId());
+            fornecedorResponse.setNome(fornecedor.getNome());
+            fornecedorResponse.setCnpj(fornecedor.getCnpj());
+
+            responses.add(fornecedorResponse);
+        }
+
+        return responses;
     }
 }
