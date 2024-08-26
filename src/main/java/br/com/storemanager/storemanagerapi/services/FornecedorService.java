@@ -1,5 +1,6 @@
 package br.com.storemanager.storemanagerapi.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,12 @@ public class FornecedorService {
     
     @Autowired
     private FornecedorRepository fornecedorRepository;
+
+    public List<Fornecedor> getAllFornecedores() {
+        List<Fornecedor> fornecedores = fornecedorRepository.getAllFornecedores();
+
+        return fornecedores;
+    }
 
     // Retorna o um fornecedor pelo ID
     public Fornecedor findFornecedorById(Long id) {
