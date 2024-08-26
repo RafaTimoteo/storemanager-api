@@ -1,6 +1,7 @@
 package br.com.storemanager.storemanagerapi.controllers;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,15 @@ public class FornecedorController {
 
     @Autowired
     private FornecedorService fornecedorService;
+
+    @GetMapping
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<FornecedorResponse>> getAllFornecedores() {
+        List<Fornecedor> fornecedores = fornecedorService.getAllFornecedores();
+        List<FornecedorResponse> responses = FornecedorMapper.toResponseList(fornecedores);
+
+        return ResponseEntity.ok().body(responses);
+    }
 
     // Retorna um obj Fornecedor pelo ID
     @GetMapping("/{id}")
